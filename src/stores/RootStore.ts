@@ -1,10 +1,16 @@
-import CounterStore from './CounterStore'
+import ExampleStore from './ExampleStore'
+import TopicStore from './TopicStore'
+import PostStore from './PostStore'
 
 class RootStore {
-  counterStore: CounterStore
+  exampleStore: ExampleStore
+  topicStore: TopicStore
+  postStore: PostStore
 
   constructor() {
-    this.counterStore = new CounterStore()
+    this.exampleStore = new ExampleStore()
+    this.topicStore = new TopicStore()
+    this.postStore = new PostStore()
   }
 }
 

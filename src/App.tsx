@@ -1,24 +1,21 @@
-import { observer } from 'mobx-react-lite'
-import { useStore } from './stores/useStore'
-import './App.css'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import HomePage from './pages/HomePage'
+import TopicBoardPage from './pages/TopicBoardPage'
+import LoginPage from './pages/LoginPage'
 
-const App = observer(() => {
-  const { counterStore } = useStore()
-
+const App = () => {
   return (
-    <div className="app">
-      <h1>Pulse</h1>
-      <div className="card">
-        <button onClick={() => counterStore.increment()}>
-          count is {counterStore.count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
+    <div className="min-h-screen bg-white dark:bg-gray-900">
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/topic/:id" element={<TopicBoardPage />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   )
-})
+}
 
 export default App
 
