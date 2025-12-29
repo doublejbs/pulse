@@ -11,10 +11,6 @@ const LoginPage = () => {
         provider: 'kakao',
         options: {
           redirectTo: `https://qvuqueewtlbsdyzqsdnp.supabase.co/auth/v1/callback`,
-          queryParams: {
-            // account_email을 제외: scope를 지정하지 않으면 Supabase Dashboard 설정 사용
-            // 또는 카카오 디벨로퍼스 콘솔에서 동의 항목 비활성화
-          },
         },
       })
 
