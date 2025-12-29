@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase'
 export interface Post {
   id: number
   topic_id: number
+  user_id?: string
   content: string
   created_at?: string
   updated_at?: string
@@ -16,6 +17,7 @@ export interface Comment {
   id: number
   post_id: number
   parent_comment_id?: number | null
+  user_id?: string
   content: string
   created_at?: string
   updated_at?: string

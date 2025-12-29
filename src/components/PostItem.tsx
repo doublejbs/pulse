@@ -1,7 +1,8 @@
 import { observer } from 'mobx-react-lite'
-import { useState } from 'react'
+import { useState, useEffect, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '@/stores/useStore'
+import { supabase } from '@/lib/supabase'
 import type { Post } from '@/stores/PostStore'
 import CommentItem from './CommentItem'
 
@@ -16,6 +17,16 @@ const PostItem = observer(({ post }: PostItemProps) => {
   const [showComments, setShowComments] = useState(false)
   const [commentContent, setCommentContent] = useState('')
   const [isSubmittingComment, setIsSubmittingComment] = useState(false)
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
+
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      setCurrentUserId(user?.id || null)
+    }
+
+    getCurrentUser()
+  }, [])
 
   const comments = postStore.comments[post.id] || []
 
@@ -37,7 +48,7 @@ const PostItem = observer(({ post }: PostItemProps) => {
     setShowComments(!showComments)
   }
 
-  const handleSubmitComment = async (e: React.FormEvent) => {
+  const handleSubmitComment = async (e: FormEvent) => {
     e.preventDefault()
     if (!commentContent.trim() || isSubmittingComment) return
 
@@ -62,8 +73,17 @@ const PostItem = observer(({ post }: PostItemProps) => {
     }
   }
 
+  const isMyPost = currentUserId && post.user_id === currentUserId
+
   return (
     <div className="p-4 border-b border-gray-200 dark:border-gray-800">
+      <div className="flex items-start gap-2 mb-3">
+        {isMyPost && (
+          <span className="px-2 py-0.5 text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 rounded">
+            내가 쓴글
+          </span>
+        )}
+      </div>
       <p className="text-gray-900 dark:text-white whitespace-pre-wrap mb-3">
         {post.content}
       </p>
@@ -124,7 +144,12 @@ const PostItem = observer(({ post }: PostItemProps) => {
               </p>
             ) : (
               comments.map((comment) => (
-                <CommentItem key={comment.id} comment={comment} postId={post.id} />
+                <CommentItem 
+                  key={comment.id} 
+                  comment={comment} 
+                  postId={post.id}
+                  currentUserId={currentUserId}
+                />
               ))
             )}
           </div>

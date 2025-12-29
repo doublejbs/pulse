@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { useState } from 'react'
+import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '@/stores/useStore'
 import type { Comment } from '@/stores/PostStore'
@@ -7,9 +7,10 @@ import type { Comment } from '@/stores/PostStore'
 interface CommentItemProps {
   comment: Comment
   postId: number
+  currentUserId: string | null
 }
 
-const CommentItem = observer(({ comment, postId }: CommentItemProps) => {
+const CommentItem = observer(({ comment, postId, currentUserId }: CommentItemProps) => {
   const { postStore } = useStore()
   const navigate = useNavigate()
   const [showReplies, setShowReplies] = useState(false)
@@ -31,7 +32,7 @@ const CommentItem = observer(({ comment, postId }: CommentItemProps) => {
     setShowReplies(!showReplies)
   }
 
-  const handleSubmitReply = async (e: React.FormEvent) => {
+  const handleSubmitReply = async (e: FormEvent) => {
     e.preventDefault()
     if (!replyContent.trim() || isSubmittingReply) return
 
@@ -57,9 +58,17 @@ const CommentItem = observer(({ comment, postId }: CommentItemProps) => {
   }
 
   const replies = comment.replies || []
+  const isMyComment = currentUserId && comment.user_id === currentUserId
 
   return (
     <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+      <div className="flex items-start gap-2 mb-2">
+        {isMyComment && (
+          <span className="px-2 py-0.5 text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 rounded">
+            내가 쓴글
+          </span>
+        )}
+      </div>
       <p className="text-sm text-gray-900 dark:text-white whitespace-pre-wrap">
         {comment.content}
       </p>
@@ -116,7 +125,12 @@ const CommentItem = observer(({ comment, postId }: CommentItemProps) => {
           {replies.length > 0 && (
             <div className="space-y-2 ml-4 border-l-2 border-gray-200 dark:border-gray-700 pl-3">
               {replies.map((reply) => (
-                <CommentItem key={reply.id} comment={reply} postId={postId} />
+                <CommentItem 
+                  key={reply.id} 
+                  comment={reply} 
+                  postId={postId}
+                  currentUserId={currentUserId}
+                />
               ))}
             </div>
           )}

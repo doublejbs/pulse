@@ -16,7 +16,7 @@ const CreatePulsePage = ({ onClose, onSubmit }: CreatePulsePageProps) => {
         await onSubmit(content.trim())
         setContent('')
         onClose()
-      } catch (error) {
+      } catch {
         // 에러는 상위에서 처리
       } finally {
         setLoading(false)
